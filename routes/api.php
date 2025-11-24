@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +12,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+
+    Route::put('/user', [UserController::class, 'update']);
 
     Route::post('/logout', function (Request $request) {
         $request->user()->currentAccessToken()->delete();
@@ -30,6 +33,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
         return response()->json(['token' => $newToken->plainTextToken]);
     });
+    Route::apiResource('communities', \App\Http\Controllers\CommunityController::class);
+    Route::post('communities/{community}/join', [\App\Http\Controllers\CommunityController::class, 'join']);
+    Route::post('communities/{community}/leave', [\App\Http\Controllers\CommunityController::class, 'leave']);
 });
 
 Route::post('/login', function (Request $request) {
@@ -54,14 +60,17 @@ Route::post('/login', function (Request $request) {
 
 Route::post('/register', function (Request $request) {
     $request->validate([
-        'name' => 'required|string|max:255',
+        'first_name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
         'password' => 'required|string|min:8|confirmed',
         'device_name' => 'required',
     ]);
 
     $user = User::create([
-        'name' => $request->name,
+        'first_name' => $request->first_name,
+        'last_name' => $request->last_name,
+        'username' => explode('@', $request->email)[0] . rand(1000, 9999),
         'email' => $request->email,
         'password' => Hash::make($request->password),
     ]);

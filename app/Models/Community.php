@@ -38,4 +38,28 @@ class Community extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
+
+    /**
+     * The users that belong to the community.
+     */
+    public function members()
+    {
+        return $this->belongsToMany(User::class)->withPivot('role');
+    }
+
+    /**
+     * Get the custom fields for the community.
+     */
+    public function customFields()
+    {
+        return $this->hasMany(CustomField::class);
+    }
+
+    /**
+     * Get the events for the community.
+     */
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
 }

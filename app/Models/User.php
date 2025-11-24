@@ -49,4 +49,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    /**
+     * The communities that the user belongs to.
+     */
+    public function communities()
+    {
+        return $this->belongsToMany(Community::class)->withPivot('role');
+    }
+
+    /**
+     * The communities owned by the user.
+     */
+    public function ownedCommunities()
+    {
+        return $this->hasMany(Community::class, 'owner_id');
+    }
 }
