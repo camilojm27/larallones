@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 
@@ -17,6 +19,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::post('/logout', function (Request $request) {
         $request->user()->currentAccessToken()->delete();
+
         return response()->noContent();
     });
 
@@ -33,9 +36,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
         return response()->json(['token' => $newToken->plainTextToken]);
     });
-    Route::apiResource('communities', \App\Http\Controllers\CommunityController::class);
-    Route::post('communities/{community}/join', [\App\Http\Controllers\CommunityController::class, 'join']);
-    Route::post('communities/{community}/leave', [\App\Http\Controllers\CommunityController::class, 'leave']);
+    Route::apiResource('communities', CommunityController::class);
+    Route::post('communities/{community}/join', [CommunityController::class, 'join']);
+    Route::post('communities/{community}/leave', [CommunityController::class, 'leave']);
 });
 
 Route::post('/login', function (Request $request) {
@@ -47,7 +50,7 @@ Route::post('/login', function (Request $request) {
 
     $user = User::where('email', $request->email)->first();
 
-    if (!$user || !Hash::check($request->password, $user->password)) {
+    if (! $user || ! Hash::check($request->password, $user->password)) {
         throw ValidationException::withMessages([
             'email' => ['The provided credentials are incorrect.'],
         ]);
@@ -55,6 +58,16 @@ Route::post('/login', function (Request $request) {
 
     return response()->json([
         'token' => $user->createToken($request->device_name)->plainTextToken,
+    ]);
+});
+
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    Password::sendResetLink($request->only('email'));
+
+    return response()->json([
+        'status' => 'If an account with that email exists, we\'ve sent a password reset link.',
     ]);
 });
 
@@ -70,7 +83,7 @@ Route::post('/register', function (Request $request) {
     $user = User::create([
         'first_name' => $request->first_name,
         'last_name' => $request->last_name,
-        'username' => explode('@', $request->email)[0] . rand(1000, 9999),
+        'username' => explode('@', $request->email)[0].rand(1000, 9999),
         'email' => $request->email,
         'password' => Hash::make($request->password),
     ]);
