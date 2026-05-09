@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mail\Lettr;
 
+use App\Dto\Lettr\PaymentDeclinedData;
 use Illuminate\Mail\Mailables\Envelope;
 use Lettr\Laravel\Mail\LettrMailable;
-use App\Dto\Lettr\PaymentDeclinedData;
 
 class PaymentDeclined extends LettrMailable
 {

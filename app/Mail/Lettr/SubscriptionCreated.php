@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mail\Lettr;
 
+use App\Dto\Lettr\SubscriptionCreatedData;
 use Illuminate\Mail\Mailables\Envelope;
 use Lettr\Laravel\Mail\LettrMailable;
-use App\Dto\Lettr\SubscriptionCreatedData;
 
 class SubscriptionCreated extends LettrMailable
 {

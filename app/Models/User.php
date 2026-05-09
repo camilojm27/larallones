@@ -3,15 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    /** @use HasFactory<UserFactory> */
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -49,10 +52,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
     /**
      * The communities that the user belongs to.
      */
-    public function communities()
+    public function communities(): BelongsToMany
     {
         return $this->belongsToMany(Community::class)->withPivot('role');
     }
@@ -60,7 +64,7 @@ class User extends Authenticatable
     /**
      * The communities owned by the user.
      */
-    public function ownedCommunities()
+    public function ownedCommunities(): HasMany
     {
         return $this->hasMany(Community::class, 'owner_id');
     }

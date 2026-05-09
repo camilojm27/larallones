@@ -5,7 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Dynamic attributes appended for API responses.
+ *
+ * @property bool $is_member
+ * @property bool $is_owner
+ */
 class Community extends Model
 {
     use HasFactory;
@@ -13,7 +21,7 @@ class Community extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'owner_id',
@@ -42,23 +50,27 @@ class Community extends Model
     /**
      * The users that belong to the community.
      */
-    public function members()
+    public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withPivot('role');
     }
 
     /**
      * Get the custom fields for the community.
+     *
+     * @return HasMany<CustomField, $this>
      */
-    public function customFields()
+    public function customFields(): HasMany
     {
         return $this->hasMany(CustomField::class);
     }
 
     /**
      * Get the events for the community.
+     *
+     * @return HasMany<Event, $this>
      */
-    public function events()
+    public function events(): HasMany
     {
         return $this->hasMany(Event::class);
     }

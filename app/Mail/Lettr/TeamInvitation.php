@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Mail\Lettr;
 
+use App\Dto\Lettr\TeamInvitationData;
 use Illuminate\Mail\Mailables\Envelope;
 use Lettr\Laravel\Mail\LettrMailable;
-use App\Dto\Lettr\TeamInvitationData;
 
 class TeamInvitation extends LettrMailable
 {

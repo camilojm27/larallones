@@ -14,11 +14,11 @@ class CommunityController extends Controller
     {
         $user = $request->user();
         $ownedCommunitiesIds = $user->ownedCommunities->pluck('id');
-        
+
         // Exclude owned communities from my_communities to prevent duplicates
         $myJoinedCommunities = $user->communities->whereNotIn('id', $ownedCommunitiesIds)->values();
         $myCommunitiesIds = $myJoinedCommunities->pluck('id');
-        
+
         $otherCommunities = Community::whereNotIn('id', $myCommunitiesIds)
             ->whereNotIn('id', $ownedCommunitiesIds)
             ->get();
@@ -26,7 +26,7 @@ class CommunityController extends Controller
         return response()->json([
             'my_communities' => $myJoinedCommunities,
             'owned_communities' => $user->ownedCommunities,
-            'other_communities' => $otherCommunities
+            'other_communities' => $otherCommunities,
         ]);
     }
 
@@ -44,7 +44,7 @@ class CommunityController extends Controller
         $community = Community::create([
             'owner_id' => $request->user()->id,
             'name' => $request->name,
-            'slug' => Str::slug($request->name) . '-' . rand(1000, 9999),
+            'slug' => Str::slug($request->name).'-'.rand(1000, 9999),
             'description' => $request->description,
             'address' => $request->address,
             'phone_number' => $request->phone_number,
@@ -83,7 +83,7 @@ class CommunityController extends Controller
         $rules = [];
         foreach ($community->customFields as $field) {
             if ($field->is_required) {
-                $rules['custom_fields.' . $field->slug] = 'required';
+                $rules['custom_fields.'.$field->slug] = 'required';
             }
         }
         $request->validate($rules);
