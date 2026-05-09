@@ -1,0 +1,36 @@
+meta {
+  name: Join Community
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/communities/{{communityId}}/join
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "custom_fields": {}
+  }
+}
+
+tests {
+  test("returns 200", () => {
+    expect(res.status).to.equal(200);
+  });
+
+  test("returns success message", () => {
+    expect(res.body.message).to.equal("Joined successfully");
+  });
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Logout
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/logout
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+script:post-response {
+  if (res.status === 204) {
+    bru.setVar("authToken", "");
+  }
+}
+
+tests {
+  test("returns 204", () => {
+    expect(res.status).to.equal(204);
+  });
+}

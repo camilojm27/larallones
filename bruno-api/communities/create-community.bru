@@ -1,0 +1,49 @@
+meta {
+  name: Create Community
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/communities
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "name": "Surf Club",
+    "description": "A community for surf enthusiasts.",
+    "address": "123 Ocean Ave",
+    "phone_number": "+1234567890",
+    "email": "surf@example.com",
+    "website": "https://surfclub.example.com"
+  }
+}
+
+script:post-response {
+  if (res.status === 201) {
+    bru.setVar("communityId", res.body.id);
+  }
+}
+
+tests {
+  test("returns 201", () => {
+    expect(res.status).to.equal(201);
+  });
+
+  test("returns the created community", () => {
+    expect(res.body.id).to.be.a("number");
+    expect(res.body.name).to.equal("Surf Club");
+    expect(res.body.slug).to.be.a("string");
+  });
+}

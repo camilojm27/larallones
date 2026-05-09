@@ -1,0 +1,37 @@
+meta {
+  name: Get Community
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/communities/{{communityId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+tests {
+  test("returns 200", () => {
+    expect(res.status).to.equal(200);
+  });
+
+  test("returns community with membership flags", () => {
+    expect(res.body.id).to.be.a("number");
+    expect(res.body.name).to.be.a("string");
+    expect(res.body).to.have.property("is_member");
+    expect(res.body).to.have.property("is_owner");
+  });
+
+  test("includes custom fields and events", () => {
+    expect(res.body).to.have.property("custom_fields");
+    expect(res.body).to.have.property("events");
+  });
+}

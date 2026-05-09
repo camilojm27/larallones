@@ -1,0 +1,29 @@
+meta {
+  name: Leave Community
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/communities/{{communityId}}/leave
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+tests {
+  test("returns 200", () => {
+    expect(res.status).to.equal(200);
+  });
+
+  test("returns success message", () => {
+    expect(res.body.message).to.equal("Left community successfully");
+  });
+}

@@ -1,0 +1,35 @@
+meta {
+  name: List Communities
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/communities
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+tests {
+  test("returns 200", () => {
+    expect(res.status).to.equal(200);
+  });
+
+  test("returns three community groups", () => {
+    expect(res.body).to.have.property("my_communities");
+    expect(res.body).to.have.property("owned_communities");
+    expect(res.body).to.have.property("other_communities");
+  });
+
+  test("my_communities is an array", () => {
+    expect(res.body.my_communities).to.be.an("array");
+  });
+}
