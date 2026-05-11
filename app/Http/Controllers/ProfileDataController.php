@@ -45,7 +45,7 @@ class ProfileDataController extends Controller
         $user = $request->user();
         $payload = $request->all();
 
-        if (! is_array($payload) || $payload === []) {
+        if ($payload === []) {
             throw ValidationException::withMessages([
                 'payload' => ['At least one profile field must be supplied.'],
             ]);

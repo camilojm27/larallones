@@ -26,7 +26,7 @@ class ProfileFieldRules
             foreach ($config['shape'] as $subKey => $subType) {
                 $subRules = in_array($subKey, $required, true) ? ['required'] : ['nullable'];
                 $subRules[] = self::laravelTypeFor((string) $subType);
-                $rules["{$key}.{$subKey}"] = array_values(array_filter($subRules));
+                $rules["{$key}.{$subKey}"] = $subRules;
             }
         }
 
@@ -51,16 +51,16 @@ class ProfileFieldRules
                 isset($config['before_or_equal']) ? 'before_or_equal:'.$config['before_or_equal'] : null,
                 isset($config['after_or_equal']) ? 'after_or_equal:'.$config['after_or_equal'] : null,
             ])),
-            'enum' => array_values(array_filter([
+            'enum' => array_filter([
                 'required',
                 'string',
                 isset($config['enum']) && is_array($config['enum']) ? Rule::in($config['enum']) : null,
-            ])),
-            'string' => array_values(array_filter([
+            ]),
+            'string' => array_filter([
                 'required',
                 'string',
                 isset($config['max_length']) ? 'max:'.(int) $config['max_length'] : null,
-            ])),
+            ]),
             'phone' => ['required', 'string', 'max:32'],
             'email' => ['required', 'email', 'max:255'],
             'json' => ['required', 'array'],

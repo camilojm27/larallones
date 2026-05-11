@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Cast a Postgres TEXT[]/CHAR(n)[] column to/from a PHP array of strings.
  *
- * @implements CastsAttributes<list<string>|null, list<string>|null>
+ * @implements CastsAttributes<list<string>|null, mixed>
  */
 class PostgresStringArray implements CastsAttributes
 {
@@ -19,7 +19,7 @@ class PostgresStringArray implements CastsAttributes
         }
 
         if (is_array($value)) {
-            return array_values(array_map('strval', $value));
+            return array_map('strval', $value);
         }
 
         $trimmed = trim((string) $value, '{}');
@@ -30,10 +30,10 @@ class PostgresStringArray implements CastsAttributes
 
         $items = str_getcsv($trimmed, ',', '"', '\\');
 
-        return array_values(array_map(
+        return array_map(
             fn (string $item): string => trim($item),
             $items
-        ));
+        );
     }
 
     public function set(Model $model, string $key, mixed $value, array $attributes): ?string
@@ -51,7 +51,7 @@ class PostgresStringArray implements CastsAttributes
             $escaped = str_replace(['\\', '"'], ['\\\\', '\\"'], $string);
 
             return '"'.$escaped.'"';
-        }, array_values($value));
+        }, $value);
 
         return '{'.implode(',', $escaped).'}';
     }
