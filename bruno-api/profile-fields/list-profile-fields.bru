@@ -1,0 +1,40 @@
+meta {
+  name: List Profile Fields
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/profile-fields
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+tests {
+  test("returns 200", () => {
+    expect(res.status).to.equal(200);
+  });
+
+  test("returns a list of definitions", () => {
+    expect(res.body).to.have.property("data");
+    expect(res.body.data).to.be.an("array");
+  });
+
+  test("each definition has the expected shape", () => {
+    if (res.body.data.length > 0) {
+      const def = res.body.data[0];
+      expect(def).to.have.property("field_key");
+      expect(def).to.have.property("data_type");
+      expect(def).to.have.property("is_pii");
+      expect(def).to.have.property("i18n_label_key");
+    }
+  });
+}

@@ -1,0 +1,45 @@
+meta {
+  name: Update Profile Data
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/api/me/profile-data
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "blood_type": "O+",
+    "birth_date": "1995-04-21",
+    "health_coverage": "Sura",
+    "emergency_contact": {
+      "name": "Maria",
+      "phone": "+573001234567",
+      "relationship": "sister"
+    },
+    "dietary_restrictions": ["vegetarian", "gluten_free"]
+  }
+}
+
+tests {
+  test("returns 200", () => {
+    expect(res.status).to.equal(200);
+  });
+
+  test("persists the values that were sent", () => {
+    expect(res.body.data.blood_type).to.equal("O+");
+    expect(res.body.data.emergency_contact.name).to.equal("Maria");
+  });
+}

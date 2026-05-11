@@ -1,0 +1,31 @@
+meta {
+  name: Get Profile Data
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/me/profile-data
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+tests {
+  test("returns 200", () => {
+    expect(res.status).to.equal(200);
+  });
+
+  test("returns data and definitions", () => {
+    expect(res.body).to.have.property("data");
+    expect(res.body).to.have.property("definitions");
+    expect(res.body.definitions).to.be.an("array");
+  });
+}

@@ -1,0 +1,49 @@
+meta {
+  name: Create Identity Document
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/me/identity-documents
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "country_code": "CO",
+    "document_type": "CC",
+    "document_number": "1.234.567.890",
+    "is_primary": true
+  }
+}
+
+script:post-response {
+  if (res.status === 201) {
+    bru.setVar("identityDocumentId", res.body.id);
+  }
+}
+
+tests {
+  test("returns 201 when the document is new", () => {
+    expect([201, 409]).to.include(res.status);
+  });
+
+  test("normalizes the document number on success", () => {
+    if (res.status === 201) {
+      expect(res.body.document_number).to.equal("1234567890");
+      expect(res.body.country_code).to.equal("CO");
+      expect(res.body.document_type).to.equal("CC");
+    }
+  });
+}

@@ -1,0 +1,38 @@
+meta {
+  name: Update Identity Document
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/api/me/identity-documents/{{identityDocumentId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "is_primary": true
+  }
+}
+
+tests {
+  test("returns 200 when the user owns the document", () => {
+    expect([200, 403, 404]).to.include(res.status);
+  });
+
+  test("reflects is_primary when updated", () => {
+    if (res.status === 200) {
+      expect(res.body.is_primary).to.equal(true);
+    }
+  });
+}

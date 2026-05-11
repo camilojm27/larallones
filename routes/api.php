@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\IdentityDocumentController;
+use App\Http\Controllers\ProfileDataController;
+use App\Http\Controllers\ProfileFieldController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -39,6 +42,17 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::apiResource('communities', CommunityController::class);
     Route::post('communities/{community}/join', [CommunityController::class, 'join']);
     Route::post('communities/{community}/leave', [CommunityController::class, 'leave']);
+
+    Route::get('me/profile-data', [ProfileDataController::class, 'index']);
+    Route::put('me/profile-data', [ProfileDataController::class, 'update']);
+    Route::delete('me/profile-data/{field_key}', [ProfileDataController::class, 'destroy']);
+
+    Route::get('me/identity-documents', [IdentityDocumentController::class, 'index']);
+    Route::post('me/identity-documents', [IdentityDocumentController::class, 'store']);
+    Route::patch('me/identity-documents/{identityDocument}', [IdentityDocumentController::class, 'update']);
+    Route::delete('me/identity-documents/{identityDocument}', [IdentityDocumentController::class, 'destroy']);
+
+    Route::get('profile-fields', [ProfileFieldController::class, 'index']);
 });
 
 Route::post('/login', function (Request $request) {
@@ -78,6 +92,7 @@ Route::post('/register', function (Request $request) {
         'email' => 'required|email|unique:users,email',
         'password' => 'required|string|min:8|confirmed',
         'device_name' => 'required',
+        'country_code' => 'nullable|string|size:2',
     ]);
 
     $user = User::create([
@@ -85,6 +100,7 @@ Route::post('/register', function (Request $request) {
         'last_name' => $request->last_name,
         'username' => explode('@', $request->email)[0].rand(1000, 9999),
         'email' => $request->email,
+        'country_code' => $request->country_code ? strtoupper($request->country_code) : null,
         'password' => Hash::make($request->password),
     ]);
 

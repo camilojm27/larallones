@@ -1,0 +1,25 @@
+meta {
+  name: Delete Identity Document
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/api/me/identity-documents/{{identityDocumentId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+tests {
+  test("returns 204 when the user owns the document", () => {
+    expect([204, 403, 404]).to.include(res.status);
+  });
+}

@@ -1,0 +1,30 @@
+meta {
+  name: List Identity Documents
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/me/identity-documents
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+tests {
+  test("returns 200", () => {
+    expect(res.status).to.equal(200);
+  });
+
+  test("returns a data array", () => {
+    expect(res.body).to.have.property("data");
+    expect(res.body.data).to.be.an("array");
+  });
+}

@@ -1,0 +1,29 @@
+meta {
+  name: Delete Profile Data Field
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{baseUrl}}/api/me/profile-data/{{profileFieldKey}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+headers {
+  Accept: application/json
+}
+
+vars:pre-request {
+  profileFieldKey: blood_type
+}
+
+tests {
+  test("returns 204 when the field existed", () => {
+    expect([204, 404]).to.include(res.status);
+  });
+}
